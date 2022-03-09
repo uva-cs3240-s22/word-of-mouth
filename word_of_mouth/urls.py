@@ -1,4 +1,4 @@
-"""A07WordOfMouth URL Configuration
+"""word_of_mouth URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.0/topics/http/urls/
@@ -18,5 +18,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('sprint2/', include('sprint2.urls')),
+    path('', include('main.urls')),
 ]

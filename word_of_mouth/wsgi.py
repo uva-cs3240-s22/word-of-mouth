@@ -1,5 +1,5 @@
 """
-WSGI config for A07WordOfMouth project.
+WSGI config for word_of_mouth project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'A07WordOfMouth.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'word_of_mouth.settings')
 
 application = get_wsgi_application()
