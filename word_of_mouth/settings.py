@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
+import os
 
 SITE_ID = 1
 LOGIN_REDIRECT_URL = "/"
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",  # <--
     "allauth.socialaccount.providers.google",
     "main",
+    "word_of_mouth",
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -141,7 +143,10 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-django_heroku.settings(locals())
+# django heroku will assume that we're running tests on Heroku CI if the 'CI' variable
+# is set... so check to see if we are running in Github Actions vs Heroku
+if 'GITHUB_ACTIONS' not in os.environ:
+    django_heroku.settings(locals())
 
 #add this in the end of file
 AUTHENTICATION_BACKENDS = (
