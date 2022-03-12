@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",  # <--
     "allauth.socialaccount.providers.google",
     "main",
+    "word_of_mouth",
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
