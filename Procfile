@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: gunicorn A07WordOfMouth.wsgi
+web: gunicorn word_of_mouth.wsgi
