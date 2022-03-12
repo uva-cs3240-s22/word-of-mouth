@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 class Command(BaseCommand):
-    help = 'Closes the specified poll for voting'
+    help = 'Makes a new social app using environment variables.'
 
     def handle(self, *args, **options):
         try:
