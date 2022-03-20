@@ -2,9 +2,7 @@ name: Django CI
 
 on:
   push:
-    branches: [ main, develop, specify-site-id, github-actions-test ]
-  pull_request:
-    branches: [ main, develop, specify-site-id, github-actions-test ]
+    branches: [ main, develop ] #MAKE SURE TO ADD YOUR BRANCH TO THIS LIST IF YOU WANT IT TO BE TESTED
 
 jobs:
   build:
