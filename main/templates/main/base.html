@@ -6,6 +6,7 @@
 {% bootstrap_javascript %}
 
 <!DOCTYPE html>
+
 <ul class="nav">
     <li class="nav-item">
       <a class="nav-link active" aria-current="page" href="">something</a>
@@ -23,3 +24,20 @@
       <a class="nav-link" href="">something5</a>
     </li>
   </ul>
+
+<html lang="en">
+<head>
+  {% block title %}<title>Recipe Project</title>{% endblock %}
+</head>
+<body>
+  {% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}
+  {% block content %}<!-- default content text (typically empty) -->{% endblock %}
+</body>
+
+<footer class="pt-5 my-5 text-muted border-top">
+    group a07 :) <br>
+    privacy policy (uh) <br>
+    Copyright 2022? heh
+</footer>
+</html>
+

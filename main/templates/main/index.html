@@ -1,53 +1,41 @@
-
+{%  extends 'main/base.html' %}
 
 {% load static %}
 
 {% load bootstrap5 %}
 
-{% bootstrap_css %}
-{% bootstrap_javascript %}
-
-<ul class="nav">
-    <li class="nav-item">
-      <a class="nav-link active" aria-current="page" href="">something</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="">something2</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="">something3</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="">something4</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="">something5</a>
-    </li>
-  </ul>
-
-{% load account %}
-{% load i18n %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Google Registration</title>
-</head>
-<body>
-{% load socialaccount %}
-<h1>My Google Login Project</h1>
-<ul>
-    <a href="{% provider_login_url 'google' %}?next=/">Login with Google</a>
-</ul>
-{% if user.is_authenticated %}
+{% block content %}
     <p>
-        {% user_display user as user_display %}
-        {% blocktrans %}{{ user_display }} has logged in...{% endblocktrans %}
+    Welcome to the website we are working on, log in with a valid gmail account
     </p>
-{% else %}
-    <p>User is not logged in</p>
 
-{% endif %}
+    {% load account %}
+    {% load i18n %}
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Google Registration</title>
+    </head>
+    <body>
+    {% load socialaccount %}
+    <h1>My Google Login Project</h1>
+    <ul>
+        <a href="{% provider_login_url 'google' %}?next=/">Login with Google</a>
+    </ul>
+    {% if user.is_authenticated %}
+        <p>
+            {% user_display user as user_display %}
+            {% blocktrans %}{{ user_display }} has logged in...{% endblocktrans %}
+        </p>
+    {% else %}
+        <p>User is not logged in</p>
+
+    {% endif %}
 
 
-</body>
-</html>
+    </body>
+    </html>
+
+{% endblock %}
+
