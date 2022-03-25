@@ -2,7 +2,6 @@ django-allauth
 
 Django
 
-
 gunicorn
 
 django-bootstrap-v5
