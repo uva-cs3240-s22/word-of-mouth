@@ -13,3 +13,4 @@
 6. Create superuser: `python manage.py createsuperuser`
 7. Go to `localhost:8000/admin`, go to "Social Applications", and add the application with the "Client ID" and "Secret Key" that we got from our GCP console.
 8. In Django Admin, edit `example.com` to be `localhost` (as opposed to editing SITE_ID in settings.py)
+9. Set up environment variables. First, make a file in the root directory called `.env` and set the variables `GOOGLE_SECRET_KEY` and `GOOGLE_CLIENT_ID` to their respective values. Next, the `DEV` environment variable must be set manually to anything through the use of cmd, terminal, or by modifying the `activate.bat` file for your virtual environment.
