@@ -1,8 +1,6 @@
 name: Django CI
 
-on:
-  push:
-    branches: [ main, develop, fix-duplicate-test-runs ] #MAKE SURE TO ADD YOUR BRANCH TO THIS LIST IF YOU WANT IT TO BE TESTED
+on: [push]
 
 jobs:
   build:
