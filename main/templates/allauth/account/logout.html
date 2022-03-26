@@ -1,0 +1,15 @@
+{# https://stackoverflow.com/questions/50207760/skipping-initial-login-page-with-django-allauth #}
+{# Used to skip intermediate login page #}
+{%load socialaccount %}
+
+<body onload="document.forms['google_logout'].submit()">
+
+<p>You should be redirect to the Google login page in some seconds otherwise use the button below.</p>
+
+
+<form method="post" name="google_logout" action=" /accounts/logout/">
+  {% csrf_token %}
+  <button type="submit">Continue</button>
+</form>
+
+</body>
