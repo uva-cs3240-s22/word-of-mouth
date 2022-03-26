@@ -1,0 +1,19 @@
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method ="post">
+
+{% csrf_token %}
+{% bootstrap_form form layout='inline' %}
+    <br>
+    <button type="submit" >Post your recipe</button>
+</form>
+</body>
+</html>

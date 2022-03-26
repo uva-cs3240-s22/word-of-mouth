@@ -1,0 +1,29 @@
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% if recipe_list %}
+    <ul>
+    {% for recipe in recipe_list %}
+       <li style="text-align:center">Title: {{ recipe.title_text }}
+    <br>
+       Text: {{ recipe.ingredients_list }}
+         <br>
+         Text: {{ recipe.body_text }}
+
+       </li>
+        <br>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No thoughts are available.</p>
+{% endif %}
+</form>
+</body>
+</html>
