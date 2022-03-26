@@ -1,25 +1,41 @@
-{% load account %}
-{% load i18n %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Google Registration</title>
-</head>
-<body>
-{% load socialaccount %}
-<h1>My Google Login Project</h1>
-<a href="{% provider_login_url 'google' %}?next=/">Login with Google</a>
+{%  extends 'main/base.html' %}
 
-{% if user.is_authenticated %}
+{% comment %}{% load static %}
+
+{% load bootstrap5 %}
+
+{% block content %}
     <p>
-        {% user_display user as user_display %}
-        {% blocktrans %}{{ user_display }} has logged in...{% endblocktrans %}
+    Welcome to the website we are working on, log in with a valid gmail account
     </p>
-{% else %}
-    <p>User is not logged in</p>
 
-{% endif %}
+    {% load account %}
+    {% load i18n %}
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Google Registration</title>
+    </head>
+    <body>
+    {% load socialaccount %}
+    <h1>My Google Login Project</h1>
+    <ul>
+        <a href="{% provider_login_url 'google' %}?next=/">Login with Google</a>
+    </ul>
+    {% if user.is_authenticated %}
+        <p>
+            {% user_display user as user_display %}
+            {% blocktrans %}{{ user_display }} has logged in...{% endblocktrans %}
+        </p>
+    {% else %}
+        <p>User is not logged in</p>
+
+    {% endif %}
 
 
-</body>
-</html>
+    </body>
+    </html>
+
+{% endblock %}{% endcomment %}
+
