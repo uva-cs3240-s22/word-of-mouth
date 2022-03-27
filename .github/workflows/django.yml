@@ -1,6 +1,10 @@
 name: Django CI
 
-on: [push]
+on:
+  push:
+    branches: [ main, develop, specify-site-id, github-actions-test ]
+  pull_request:
+    branches: [ main, develop, specify-site-id, github-actions-test ]
 
 jobs:
   build:
