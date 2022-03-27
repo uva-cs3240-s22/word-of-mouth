@@ -76,7 +76,7 @@
 
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                     {% if user.is_authenticated %}
-                        <img src="{{ extra_data.picture }}" alt="Profile" class="rounded-circle">
+                        <img src="{{ avatar_url }}" alt="Profile" class="rounded-circle">
                     {% else %}
                         <i class="bi bi-person-circle" style="font-size: 2rem"></i>
                     {% endif %}
