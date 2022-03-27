@@ -11,8 +11,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
 
-            our_client_id = os.getenv('CLIENT_ID')
-            secret_key = os.getenv('SECRET_KEY')
+            our_client_id = os.getenv('GOOGLE_CLIENT_ID')
+            secret_key = os.getenv('GOOGLE_SECRET_KEY')
 
             SocialApp.objects.get(secret=secret_key, client_id=our_client_id)
             print('Social App already exists')
