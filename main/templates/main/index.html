@@ -1,41 +1,20 @@
-{%  extends 'main/base.html' %}
+{% extends 'main/base.html' %}
 
-{% comment %}{% load static %}
+{% load static %}
 
 {% load bootstrap5 %}
 
 {% block content %}
-    <p>
-    Welcome to the website we are working on, log in with a valid gmail account
-    </p>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Welcome to Word of Mouth</h5>
+                    <p>To get started, click the "New Recipe" button.</p>
+                </div>
 
-    {% load account %}
-    {% load i18n %}
-
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Google Registration</title>
-    </head>
-    <body>
-    {% load socialaccount %}
-    <h1>My Google Login Project</h1>
-    <ul>
-        <a href="{% provider_login_url 'google' %}?next=/">Login with Google</a>
-    </ul>
-    {% if user.is_authenticated %}
-        <p>
-            {% user_display user as user_display %}
-            {% blocktrans %}{{ user_display }} has logged in...{% endblocktrans %}
-        </p>
-    {% else %}
-        <p>User is not logged in</p>
-
-    {% endif %}
-
-
-    </body>
-    </html>
-
-{% endblock %}{% endcomment %}
+            </div>
+        </div><!-- End Reports -->
+    </div>
+{% endblock %}
 
