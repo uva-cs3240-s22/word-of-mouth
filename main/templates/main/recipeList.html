@@ -1,29 +1,25 @@
-{% load bootstrap5 %}
-{% bootstrap_css %}
-{% bootstrap_javascript %}
+{% extends "main/base.html" %}
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{% if recipe_list %}
-    <ul>
-    {% for recipe in recipe_list %}
-       <li style="text-align:center">Title: {{ recipe.title_text }}
-    <br>
-       Text: {{ recipe.ingredients_list }}
-         <br>
-         Text: {{ recipe.body_text }}
-
-       </li>
-        <br>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No thoughts are available.</p>
-{% endif %}
-</form>
-</body>
-</html>
+{% block title %}Explore Recipes{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        {% if recipe_list %}
+            <div class="col-6 justify-items-center">
+                {% for recipe in recipe_list %}
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">{{ recipe.title_text }}</div>
+                            <p>{{ recipe.ingredients_list|linebreaks }}</p>
+                            <div class="card-footer">{{ recipe.body_text|linebreaks }}</div>
+                        </div>
+                    </div>
+                    <br>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No thoughts are available.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
