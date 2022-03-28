@@ -42,6 +42,6 @@ class IndexTests(TestCase):
 
         response: TemplateResponse = IndexView.as_view()(self.request)
 
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['avatar_url'], 'test.jpg')
-
 
