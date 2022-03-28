@@ -4,5 +4,5 @@
       "description": "A way to signal to JSON that we want to use PostgreSQL instead of the default SQLite",
       "value": "TRUE"
     }
-  },
+  }
 }
