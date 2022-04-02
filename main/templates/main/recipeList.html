@@ -1,5 +1,5 @@
 {% extends "main/base.html" %}
-
+{% load tagname %}
 {% block title %}Explore Recipes{% endblock %}
 {% block content %}
 <div class="container">
@@ -12,7 +12,11 @@
                             <div class="card-title">{{ recipe.title_text }}</div>
                             <p>{{ recipe.ingredients_list|linebreaks }}</p>
                             <div class="card-footer">{{ recipe.body_text|linebreaks }}</div>
+                            {% if recipe in recipe_list|filter_favorite:request.user %}
+                            <a href="{% url 'favorite_add' id=recipe.id %}" class="btn btn-outline-primary">Remove from favorites</a>
+                            {%else%}
                             <a href="{% url 'favorite_add' id=recipe.id %}" class="btn btn-outline-primary">Add to favorites</a>
+                            {%endif%}
 
                         </div>
                     </div>

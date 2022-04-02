@@ -51,8 +51,13 @@ class RecipeListView(BaseMixin, generic.ListView):
     template_name = 'main/recipeList.html'
     context_object_name = 'recipe_list'
 
+
+
+
     def get_queryset(self):
         return Recipe.objects.all()
+
+
 
 
 
@@ -68,4 +73,12 @@ def favorite_add(request, id):
 def favorites_list(request):
     new = Recipe.objects.filter(favorites=request.user)
     return render(request, 'main/favorites.html', {'new': new})
+
+class FavoriteListView(BaseMixin, generic.ListView):
+    template_name = 'main/favorites.html'
+    context_object_name = 'new'
+
+    def get_queryset(self):
+        request = self.request
+        return Recipe.objects.filter(favorites=request.user)
 
