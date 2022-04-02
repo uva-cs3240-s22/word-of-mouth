@@ -9,3 +9,9 @@ django-bootstrap-v5
 django-heroku
 
 python-dotenv
+
+django-storages
+
+boto3
+
+Pillow

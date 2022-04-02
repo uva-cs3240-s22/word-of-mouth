@@ -7,6 +7,7 @@ from django.template.response import TemplateResponse
 from django.test import RequestFactory, TestCase
 
 # Create your tests here.
+from main.models import Recipe
 from main.views import IndexView
 
 
@@ -44,4 +45,18 @@ class IndexTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['avatar_url'], 'test.jpg')
+
+
+class RecipeTests(TestCase):
+    # Setting up
+    def setUp(self):
+        self.rf = RequestFactory()
+        self.request = self.rf.get('/')
+        self.request.user = User.objects.create_user('google', 'google@g.com', '123')
+
+    def test_create_recipe_without_picture(self):
+        x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe", ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
+        x.save()
+        self.assertFalse(x.picture)
+
 
