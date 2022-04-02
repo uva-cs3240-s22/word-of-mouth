@@ -1,26 +1,25 @@
 {% extends "main/base.html" %}
 
-{% block title %}Explore Recipes{% endblock %}
+{% block title %}Explore Favorite Recipes{% endblock %}
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
-        {% if recipe_list %}
+        {% if new %}
             <div class="col-6 justify-items-center">
-                {% for recipe in recipe_list %}
+                {% for recipe in new %}
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title">{{ recipe.title_text }}</div>
                             <p>{{ recipe.ingredients_list|linebreaks }}</p>
                             <div class="card-footer">{{ recipe.body_text|linebreaks }}</div>
-                            <a href="{% url 'favorite_add' id=recipe.id %}" class="btn btn-outline-primary">Add to favorites</a>
-
+                            <a href="{% url 'favorite_add' id=recipe.id %}" class="btn btn-outline-primary">Remove from favorites</a>
                         </div>
                     </div>
                     <br>
                 {% endfor %}
             </div>
         {% else %}
-            <p>No recipes are available. <a href="{% url 'new_recipe' %}">Create new recipe</a></p>
+            <p>No favorite recipes are available. <a href="{% url 'new_recipe' %}">Create new recipe</a></p>
         {% endif %}
     </div>
 </div>

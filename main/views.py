@@ -4,6 +4,8 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import TemplateView, FormView, CreateView
 from django.views.generic.base import ContextMixin, View
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect
 
 from .models import Recipe
 
@@ -51,3 +53,19 @@ class RecipeListView(BaseMixin, generic.ListView):
 
     def get_queryset(self):
         return Recipe.objects.all()
+
+
+
+def favorite_add(request, id):
+    recipe = get_object_or_404(Recipe, id=id)
+    if recipe.favorites.filter(id=request.user.id).exists():
+        recipe.favorites.remove(request.user)
+    else:
+        recipe.favorites.add(request.user)
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+
+def favorites_list(request):
+    new = Recipe.objects.filter(favorites=request.user)
+    return render(request, 'main/favorites.html', {'new': new})
+
