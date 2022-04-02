@@ -10,7 +10,7 @@
    2. For the "Authorized Redirect URLs", set it to be `http://localhost:8000/accounts/google/login/callback/`. (TODO: See above)
    3. (side note: if you are running into errors, keep in mind that `localhost` and `127.0.0.1` are two different domain names, even though they resolve to the same place)
 5. Run migrations: `python manage.py migrate`
-6. Create superuser: `python manage.py createsuperuser`
-7. Go to `localhost:8000/admin`, go to "Social Applications", and add the application with the "Client ID" and "Secret Key" that we got from our GCP console.
-8. In Django Admin, edit `example.com` to be `localhost` (as opposed to editing SITE_ID in settings.py)
-9. Set up environment variables. First, make a file in the root directory called `.env` and set the variables `GOOGLE_SECRET_KEY` and `GOOGLE_CLIENT_ID` to their respective values. Next, the `DEV` environment variable must be set manually to anything through the use of cmd, terminal, or by modifying the `activate.bat` file for your virtual environment.
+6. Create superuser: `python manage.py createsuperuser` - note that if you create it with your google email that you'll be testing with, there will be a conflict, so feel free to use a dummy email here.
+7. Copy `.env.template` over to your very own local `.env` file - note that this file is in `.gitignore` for a good reason - we don't want anybody to have access to anybody else's `.env` file.
+8. Copy the client id and secret key (gotten from the GCP console) into the corresponding environment variables into your new `.env`.
+ 
