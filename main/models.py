@@ -2,7 +2,6 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.forms import ModelForm
 
 
 class Recipe(models.Model):
@@ -12,6 +11,8 @@ class Recipe(models.Model):
     posted_date = models.DateTimeField(default=datetime.now())
     edited_date = models.DateTimeField(default=datetime.now())
     parent_recipe = models.IntegerField(null=True)  # reference parent recipe ID
+    picture = models.ImageField(null=True, upload_to='photos')
+
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
