@@ -1,11 +1,11 @@
 # Create your views here.
 from allauth.socialaccount.models import SocialAccount
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic
-from django.views.generic import TemplateView, FormView, CreateView
+from django.views.generic import TemplateView, CreateView
 from django.views.generic.base import ContextMixin, View
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
 
 from .models import Recipe
 
@@ -50,14 +50,8 @@ class RecipeListView(BaseMixin, generic.ListView):
     template_name = 'main/recipeList.html'
     context_object_name = 'recipe_list'
 
-
-
-
     def get_queryset(self):
         return Recipe.objects.all()
-
-
-
 
 
 def favorite_add(request, id):
@@ -69,12 +63,10 @@ def favorite_add(request, id):
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
-
 class FavoriteListView(BaseMixin, generic.ListView):
     template_name = 'main/favorites.html'
-    context_object_name = 'new'
+    context_object_name = 'favorites'
 
     def get_queryset(self):
         request = self.request
         return Recipe.objects.filter(favorites=request.user)
-

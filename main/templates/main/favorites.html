@@ -4,18 +4,10 @@
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
-        {% if new %}
+        {% if favorites %}
             <div class="col-6 justify-items-center">
-                {% for recipe in new %}
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="card-title">{{ recipe.title_text }}</div>
-                            <p>{{ recipe.ingredients_list|linebreaks }}</p>
-                            <div class="card-footer">{{ recipe.body_text|linebreaks }}</div>
-                            <a href="{% url 'favorite_add' id=recipe.id %}" class="btn btn-outline-danger">Remove from favorites</a>
-                        </div>
-                    </div>
-                    <br>
+                {% for recipe in favorites %}
+                    {% include "main/recipe_card.html" with recipe=recipe %}
                 {% endfor %}
             </div>
         {% else %}
