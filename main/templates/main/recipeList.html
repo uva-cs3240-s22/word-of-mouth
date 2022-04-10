@@ -2,30 +2,37 @@
 {% load tagname %}
 {% block title %}Explore Recipes{% endblock %}
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        {% if recipe_list %}
-            <div class="col-6 justify-items-center">
-                {% for recipe in recipe_list %}
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="card-title">{{ recipe.title_text }}</div>
-                            <p>{{ recipe.ingredients_list|linebreaks }}</p>
-                            <div class="card-footer">{{ recipe.body_text|linebreaks }}</div>
-                            {% if recipe in recipe_list|filter_favorite:request.user %}
+
+    <div class="container">
+        <div class="row justify-content-center">
+            {% if recipe_list %}
+                <div class="col-6 justify-items-center">
+                    {% for recipe in recipe_list %}
+                        <div class="card">
+                            <div class="card-body">
+                                {% if recipe.picture %}
+                                    <img src="{{ recipe.picture.url }}" class="card-img-top" alt="...">
+                                {% endif %}
+                            <img src="{{ recipe.owner.socialaccount_set.all.0.get_avatar_url }}" alt="Profile" class="col-2 card-img-overlay rounded-circle bg-transparent img-responsive">
+                                <div class="card-title">{{ recipe.title_text }}</div>
+                                <p>{{ recipe.ingredients_list|linebreaks }}</p>
+                                <div class="card-footer">
+                                    {{ recipe.body_text|linebreaks }}
+                                </div>
+                            </div>
+                          {% if recipe in recipe_list|filter_favorite:request.user %}
                             <a href="{% url 'favorite_add' id=recipe.id %}" class="btn btn-outline-primary">Remove from favorites</a>
                             {%else%}
                             <a href="{% url 'favorite_add' id=recipe.id %}" class="btn btn-outline-primary">Add to favorites</a>
                             {%endif%}
 
                         </div>
-                    </div>
-                    <br>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p>No recipes are available. <a href="{% url 'new_recipe' %}">Create new recipe</a></p>
-        {% endif %}
+                        <br>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No recipes are available. <a href="{% url 'new_recipe' %}">Create new recipe</a></p>
+            {% endif %}
+        </div>
     </div>
-</div>
 {% endblock %}

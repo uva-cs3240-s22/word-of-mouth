@@ -38,13 +38,12 @@ class IndexView(BaseMixin, TemplateView):
 class RecipeCreateView(BaseMixin, CreateView):
     template_name = 'main/recipe.html'
     model = Recipe
-    fields = ['title_text', 'ingredients_list', 'body_text']
+    fields = ['title_text', 'ingredients_list', 'body_text', 'picture']
     success_url = reverse_lazy('recipe_list')
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
-
 
 
 class RecipeListView(BaseMixin, generic.ListView):
