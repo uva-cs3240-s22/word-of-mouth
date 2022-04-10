@@ -60,12 +60,23 @@ class RecipeTests(TestCase):
         self.assertFalse(x.picture)
 
     def test_favorite_recipe(self):
+        owner = self.request.user
         x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe", ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
         x.save()
         self.request.META['HTTP_REFERER'] = 'anything'
         response = favorite_add(self.request, x.id)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(x in Recipe.objects.filter(favorites=self.request.user))
+        self.assertEqual(owner.is_anonymous, False)
+
+    def test_anon_favorite_recipe(self):
+        owner = AnonymousUser()
+        self.assertEqual(owner.is_anonymous, True)
+        # owner must be of type user
+        # Given that the user is anonymous, the following line fails
+        # Recipe.objects.create(owner=self.request.user, title_text="Test Recipe", ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
+
+
 
     def test_remove_favorite(self):
         x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe",
