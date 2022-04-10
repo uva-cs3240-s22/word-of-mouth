@@ -8,11 +8,11 @@ class Recipe(models.Model):
     title_text = models.CharField(max_length=200)
     ingredients_list = models.TextField()
     body_text = models.TextField()
-    posted_date = models.DateTimeField(default=datetime.now())
-    edited_date = models.DateTimeField(default=datetime.now())
+    posted_date = models.DateTimeField(default=datetime.now)
+    edited_date = models.DateTimeField(default=datetime.now)
     parent = models.ForeignKey('Recipe', on_delete=models.SET_NULL, null=True,
                                related_name="children")  # reference parent recipe ID
-    picture = models.ImageField(null=True, upload_to='photos')
+    picture = models.ImageField(null=True, upload_to='photos', blank=True)
 
     owner = models.ForeignKey(
         User,
