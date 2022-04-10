@@ -49,8 +49,11 @@ class RecipeCreateView(BaseMixin, CreateView):
             return self.initial
 
     def form_valid(self, form):
-        if 'from' in self.request.GET:
+        if 'from' in self.request.POST:
+            form.instance.parent = Recipe.objects.get(id=self.request.POST['from'])
+        elif 'from' in self.request.GET:
             form.instance.parent = Recipe.objects.get(id=self.request.GET['from'])
+
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
