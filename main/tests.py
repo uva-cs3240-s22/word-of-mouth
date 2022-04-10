@@ -1,14 +1,16 @@
 from datetime import datetime
 
-from allauth.socialaccount.models import SocialApp, SocialLogin, SocialAccount
+from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.sites.models import Site
+from django.forms import modelform_factory
 from django.template.response import TemplateResponse
 from django.test import RequestFactory, TestCase
-
 # Create your tests here.
+from django.urls import reverse_lazy
+
 from main.models import Recipe
-from main.views import IndexView, favorite_add
+from main.views import IndexView, favorite_add, RecipeCreateView
 
 
 class IndexTests(TestCase):
@@ -38,7 +40,8 @@ class IndexTests(TestCase):
 
     def test_with_google_user(self):
         self.request.user = User.objects.create_user('google', 'google@g.com', '123')
-        SocialAccount.objects.create(user=self.request.user, provider='google', uid=123, last_login=datetime.now(), date_joined=datetime.now(), extra_data={"picture": "test.jpg"})
+        SocialAccount.objects.create(user=self.request.user, provider='google', uid=123, last_login=datetime.now(),
+                                     date_joined=datetime.now(), extra_data={"picture": "test.jpg"})
         self.current_site = Site.objects.get_current()
 
         response: TemplateResponse = IndexView.as_view()(self.request)
@@ -50,18 +53,21 @@ class IndexTests(TestCase):
 class RecipeTests(TestCase):
     # Setting up
     def setUp(self):
-        self.rf = RequestFactory()
+        self.user = User.objects.create_user('google', 'google@g.com', '123')
+        self.rf = RequestFactory(defaults={"user": self.user})
         self.request = self.rf.get('/')
-        self.request.user = User.objects.create_user('google', 'google@g.com', '123')
+        self.request.user = self.user
 
     def test_create_recipe_without_picture(self):
-        x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe", ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
+        x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe",
+                                  ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
         x.save()
         self.assertFalse(x.picture)
 
     def test_favorite_recipe(self):
         owner = self.request.user
-        x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe", ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
+        x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe",
+                                  ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
         x.save()
         self.request.META['HTTP_REFERER'] = 'anything'
         response = favorite_add(self.request, x.id)
@@ -76,8 +82,6 @@ class RecipeTests(TestCase):
         # Given that the user is anonymous, the following line fails
         # Recipe.objects.create(owner=self.request.user, title_text="Test Recipe", ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
 
-
-
     def test_remove_favorite(self):
         x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe",
                                   ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
@@ -85,13 +89,26 @@ class RecipeTests(TestCase):
         self.request.META['HTTP_REFERER'] = 'anything'
         response = favorite_add(self.request, x.id)
         self.assertEqual(response.status_code, 302)
-        response = favorite_add(self.request, x.id) #run favorite_add view again to remove from favorites
+        response = favorite_add(self.request, x.id)  # run favorite_add view again to remove from favorites
         self.assertEqual(response.status_code, 302)
         self.assertFalse(x in Recipe.objects.filter(favorites=self.request.user))
 
+    def test_fork_prepopulate(self):
+        x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe",
+                                  ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
 
+        x.save()
+        req = self.rf.get(reverse_lazy("new_recipe"), {"from": x.id})
+        req.user = self.user
 
+        view: RecipeCreateView = RecipeCreateView()
+        view.setup(req)
+        initial = view.get_initial()
 
+        self.assertEqual(initial['title_text'], x.title_text)
+        self.assertEqual(initial['ingredients_list'], x.ingredients_list)
+        self.assertEqual(initial['body_text'], x.body_text)
 
+        self.assertNotIn('parent_id', initial)
 
 

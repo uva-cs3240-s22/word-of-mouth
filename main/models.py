@@ -10,7 +10,8 @@ class Recipe(models.Model):
     body_text = models.TextField()
     posted_date = models.DateTimeField(default=datetime.now())
     edited_date = models.DateTimeField(default=datetime.now())
-    parent_recipe = models.IntegerField(null=True)  # reference parent recipe ID
+    parent = models.ForeignKey('Recipe', on_delete=models.SET_NULL, null=True,
+                               related_name="children")  # reference parent recipe ID
     picture = models.ImageField(null=True, upload_to='photos')
 
     owner = models.ForeignKey(
@@ -19,7 +20,6 @@ class Recipe(models.Model):
         related_name="recipes",
     )
     favorites = models.ManyToManyField(User, related_name="favorites")
-
 
     # THINGS TO THINK ABOUT -
     # what should the picture(s) be

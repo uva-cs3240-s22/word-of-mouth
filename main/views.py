@@ -1,5 +1,6 @@
 # Create your views here.
 from allauth.socialaccount.models import SocialAccount
+from django.forms import model_to_dict
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -41,7 +42,18 @@ class RecipeCreateView(BaseMixin, CreateView):
     fields = ['title_text', 'ingredients_list', 'body_text', 'picture']
     success_url = reverse_lazy('recipe_list')
 
+    def get_initial(self):
+        if 'from' in self.request.GET:
+            return model_to_dict(Recipe.objects.get(id=self.request.GET['from']), fields=self.fields)
+        else:
+            return self.initial
+
     def form_valid(self, form):
+        if 'from' in self.request.POST:
+            form.instance.parent = Recipe.objects.get(id=self.request.POST['from'])
+        elif 'from' in self.request.GET:
+            form.instance.parent = Recipe.objects.get(id=self.request.GET['from'])
+
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
@@ -52,6 +64,12 @@ class RecipeListView(BaseMixin, generic.ListView):
 
     def get_queryset(self):
         return Recipe.objects.all()
+
+
+class RecipeDetailView(BaseMixin, generic.DetailView):
+    template_name = 'main/recipe_detail.html'
+    model = Recipe
+    context_object_name = 'recipe'
 
 
 def favorite_add(request, id):
