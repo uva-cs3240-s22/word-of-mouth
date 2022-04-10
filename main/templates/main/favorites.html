@@ -12,7 +12,7 @@
                             <div class="card-title">{{ recipe.title_text }}</div>
                             <p>{{ recipe.ingredients_list|linebreaks }}</p>
                             <div class="card-footer">{{ recipe.body_text|linebreaks }}</div>
-                            <a href="{% url 'favorite_add' id=recipe.id %}" class="btn btn-outline-primary">Remove from favorites</a>
+                            <a href="{% url 'favorite_add' id=recipe.id %}" class="btn btn-outline-danger">Remove from favorites</a>
                         </div>
                     </div>
                     <br>

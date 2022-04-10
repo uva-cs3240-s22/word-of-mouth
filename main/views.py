@@ -69,9 +69,6 @@ def favorite_add(request, id):
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
-def favorites_list(request):
-    new = Recipe.objects.filter(favorites=request.user)
-    return render(request, 'main/favorites.html', {'new': new})
 
 class FavoriteListView(BaseMixin, generic.ListView):
     template_name = 'main/favorites.html'

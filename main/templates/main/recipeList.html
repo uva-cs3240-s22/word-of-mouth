@@ -1,5 +1,5 @@
 {% extends "main/base.html" %}
-{% load tagname %}
+{% load filterFavorite %}
 {% block title %}Explore Recipes{% endblock %}
 {% block content %}
 
@@ -21,7 +21,7 @@
                                 </div>
                             </div>
                           {% if recipe in recipe_list|filter_favorite:request.user %}
-                            <a href="{% url 'favorite_add' id=recipe.id %}" class="btn btn-outline-primary">Remove from favorites</a>
+                            <a href="{% url 'favorite_add' id=recipe.id %}" class="btn btn-outline-danger">Remove from favorites</a>
                             {%else%}
                             <a href="{% url 'favorite_add' id=recipe.id %}" class="btn btn-outline-primary">Add to favorites</a>
                             {%endif%}
