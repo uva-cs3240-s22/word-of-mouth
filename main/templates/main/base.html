@@ -142,6 +142,7 @@
 {% url 'index' as index_url %}
 {% url 'new_recipe' as new_recipe_url %}
 {% url 'recipe_list' as recipe_list_url %}
+{% url 'favorites_list' as favorites_list_url %}
 <aside id="sidebar" class="sidebar">
 
     <ul class="sidebar-nav" id="sidebar-nav">
@@ -154,13 +155,18 @@
             <a class="nav-link {% if request.path == recipe_list_url %}active{% else %}collapsed{% endif %}"
                href="{{ recipe_list_url }}">Explore Recipes</a>
         </li>
-        <li class="nav-item">
+
 
         <li class="nav-item">
             <a class="nav-link {% if request.path == new_recipe_url %}active{% else %}collapsed{% endif %}"
                href="{{ new_recipe_url }}">New Recipe</a>
         </li>
+
         <li class="nav-item">
+            <a class="nav-link {% if request.path == favorites_list_url %}active{% else %}collapsed{% endif %}"
+               href="{{ favorites_list_url }}">Favorites</a>
+        </li>
+
     </ul>
 
 </aside><!-- End Sidebar-->

@@ -1,0 +1,40 @@
+.favorite:hover .favorite-fill {
+    fill: gold !important;
+}
+
+.favorite:not(:hover) .favorite-outline {
+    fill: black;
+}
+
+.favorite:hover .favorite-outline {
+    fill: none;
+}
+
+.favorite:not(:hover) .favorite-fill {
+    fill: none;
+}
+
+.favorited:hover .favorite-fill,.favorite-outline {
+    fill: #bd3000;
+}
+
+.favorited:not(:hover) .favorite-outline {
+    fill: gold;
+}
+
+.favorited:not(:hover) .favorite-fill {
+    fill: gold;
+}
+
+/*.favorite-fill:not(.favorite:hover)  {*/
+/*    fill: none;*/
+/*}*/
+
+/*.favorite:hover.favorite-outline {*/
+/*    fill: none;*/
+/*}*/
+
+/*.favorite {*/
+/*    fill: black;*/
+/*}*/
+

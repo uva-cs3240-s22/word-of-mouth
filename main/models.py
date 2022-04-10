@@ -18,6 +18,8 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
         related_name="recipes",
     )
+    favorites = models.ManyToManyField(User, related_name="favorites")
+
 
     # THINGS TO THINK ABOUT -
     # what should the picture(s) be
