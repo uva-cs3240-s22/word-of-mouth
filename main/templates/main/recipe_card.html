@@ -27,7 +27,7 @@
              class="col-2 card-img-overlay rounded-circle bg-transparent img-responsive">
         <div class="card-title"><a href="{% url "recipe_detail" recipe.pk %}"> {{ recipe.title_text }}</a>
             {% if recipe.parent %}
-                <span>Forked from {{ recipe.parent.title_text }}</span>
+                <span>Forked from <a href="{% url "recipe_detail" recipe.parent.pk %}">{{ recipe.parent.title_text }}</a></span>
             {% endif %}
             {% if recipe.children.count > 0 %}
                 <span>Has {{ recipe.children.count }} child(ren).</span>
