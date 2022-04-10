@@ -1,0 +1,25 @@
+{% extends "main/base.html" %}
+
+{% block title %}Explore Recipes{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        {% if recipe_list %}
+            <div class="col-6 justify-items-center">
+                {% for recipe in recipe_list %}
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">{{ recipe.title_text }}</div>
+                            <p>{{ recipe.ingredients_list|linebreaks }}</p>
+                            <div class="card-footer">{{ recipe.body_text|linebreaks }}</div>
+                        </div>
+                    </div>
+                    <br>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No recipes are available. <a href="{% url 'new_recipe' %}">Create new recipe</a></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -147,7 +147,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # django heroku will assume that we're running tests on Heroku CI if the 'CI' variable
 # is set... so check to see if we are running in Github Actions vs Heroku
-if 'GITHUB_ACTIONS' not in os.environ and 'DEV' not in os.environ:
+if 'PROD' in os.environ and os.environ['PROD'].lower() in ('true', 't', '1'):
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'word_of_mouth',
