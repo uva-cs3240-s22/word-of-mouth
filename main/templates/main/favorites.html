@@ -1,5 +1,11 @@
 {% extends "main/base.html" %}
-
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url "index" %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url "recipe_list" %}">Recipes</a></li>
+                    <li class="breadcrumb-item active">Favorites</li>
+                </ol>
+{% endblock %}
 {% block title %}Explore Favorite Recipes{% endblock %}
 {% block content %}
 <div class="container">

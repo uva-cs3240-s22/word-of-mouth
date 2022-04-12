@@ -3,7 +3,11 @@
 {% load static %}
 
 {% load bootstrap5 %}
-
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Home</li>
+    </ol>
+{% endblock %}
 {% block title %}Home{% endblock %}
 
 {% block content %}

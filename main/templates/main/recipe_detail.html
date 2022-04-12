@@ -1,4 +1,13 @@
 {% extends "main/base.html" %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url "index" %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url "recipe_list" %}">Recipes</a></li>
+                    <li class="breadcrumb-item active">{{ recipe.title_text }}</li>
+                </ol>
+{% endblock %}
+
 {% block title %}{{ recipe.title_text }}{% endblock %}
 {% block content %}
 
