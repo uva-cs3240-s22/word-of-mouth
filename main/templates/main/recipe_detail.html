@@ -32,6 +32,12 @@
                 </div>
             </div>
             <br>
+            <div class="card">
+                <div class="card-title">Comments</div>
+                <div class="card-body">
+                    {% include "main/comment_section.html" with comments=recipe.comments %}
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
