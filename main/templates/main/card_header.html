@@ -1,4 +1,5 @@
-<div class="d-flex justify-content-end align-items-center flex" style="font-size: 1em">
+<div class="d-flex justify-content-end" style="font-size: 1em">
+    {% include "main/profile.html" with person=recipe.owner %}
     <div class="d-inline-flex align-items-center">
         <a href="{% url 'favorite_add' id=recipe.id %}" class="d-flex align-items-center mx-1">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -11,8 +12,8 @@
             </svg>
         </a>
         <span class=" align-items-center">({{ recipe.favorites.count }})</span>
-    </div>
     <a class="mx-2" href="{% url "new_recipe" %}?from={{ recipe.id }}">
         <i class="fa fa-recycle" style="color: #737373;"></i>
     </a>
+    </div>
 </div>

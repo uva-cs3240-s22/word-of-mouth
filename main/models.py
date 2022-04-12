@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django import forms
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -33,5 +34,14 @@ class Comment(models.Model):
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="comments", null=True)
     body = models.TextField()
     posted_date = models.DateTimeField(default=datetime.now)
-    edited_date = models.DateTimeField(default=None)
-    recipes = models.ForeignKey(Recipe, related_name="comments", on_delete=models.CASCADE)
+    edited_date = models.DateTimeField(null=True)
+    recipe = models.ForeignKey(Recipe, related_name="comments", on_delete=models.CASCADE)
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('body',)
+        widgets = {
+            'body': forms.TextInput(attrs={'placeholder': 'Start typing...'}),
+        }

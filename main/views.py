@@ -1,14 +1,16 @@
 # Create your views here.
 from allauth.socialaccount.models import SocialAccount
 from django.forms import model_to_dict
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views import generic
 from django.views.generic import TemplateView, CreateView
 from django.views.generic.base import ContextMixin, View
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import FormView
 
-from .models import Recipe
+from .models import Recipe, CommentForm
 
 
 class BaseMixin(ContextMixin, View):
@@ -27,9 +29,36 @@ class BaseMixin(ContextMixin, View):
         else:
             username = "Not logged in"
 
-        x['username'] = username
+        x['username'] = user.socialaccount_set.first().extra_data['name']
         x['user'] = request.user
         return x
+
+
+# https://docs.djangoproject.com/en/4.0/topics/class-based-views/mixins/
+# partially yoinked from here
+# class CommentMixin(FormMixin, View):
+#     model = Comment
+#     form_class = CommentForm
+#
+#     def get_success_url(self):
+#         return self.request.get_full_path()
+#
+#     def post(self, request, *args, **kwargs):
+#         if not request.user.is_authenticated:
+#             return HttpResponseForbidden()
+#         # self.object = self.get_object()
+#         form = self.get_form()
+#         if form.is_valid():
+#             return self.form_valid(form)
+#         else:
+#             return self.form_invalid(form)
+#
+#     def form_valid(self, form):
+#         # Here, we would record the user's interest using the message
+#         # passed in form.cleaned_data['message']
+#         form.instance.owner = self.request.user
+#         form.instance.recipe = self.get_object()
+#         return super().form_valid(form)
 
 
 class IndexView(BaseMixin, TemplateView):
@@ -66,10 +95,53 @@ class RecipeListView(BaseMixin, generic.ListView):
         return Recipe.objects.all()
 
 
+class RecipeCommentFormView(SingleObjectMixin, FormView):
+    template_name = 'main/recipe_detail.html'
+    form_class = CommentForm
+    model = Recipe
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def get_success_url(self):
+        return reverse('recipe_detail', kwargs={'pk': self.object.pk})
+
+    def form_valid(self, form):
+        # Here, we would record the user's interest using the message
+        # passed in form.cleaned_data['message']
+        form.instance.owner = self.request.user
+        form.instance.recipe = self.object
+        form.save()
+        return super().form_valid(form)
+
+
+class RecipeView(View):
+
+    def get(self, request, *args, **kwargs):
+        view = RecipeDetailView.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = RecipeCommentFormView.as_view()
+        return view(request, *args, **kwargs)
+
+
 class RecipeDetailView(BaseMixin, generic.DetailView):
     template_name = 'main/recipe_detail.html'
     model = Recipe
     context_object_name = 'recipe'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CommentForm()
+        return context
 
 
 def favorite_add(request, id):

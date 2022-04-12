@@ -9,8 +9,6 @@
         {% if recipe.picture %}
             <img src="{{ recipe.picture.url }}" class="card-img-top" alt="...">
         {% endif %}
-        <img src="{{ recipe.owner.socialaccount_set.all.0.get_avatar_url }}" alt="Profile"
-             class="col-2 card-img-overlay rounded-circle bg-transparent img-responsive">
         <div class="card-title"><a href="{% url "recipe_detail" recipe.pk %}"> {{ recipe.title_text }}</a>
             {% if recipe.parent %}
                 <span>Forked from <a href="{% url "recipe_detail" recipe.parent.pk %}">{{ recipe.parent.title_text }}</a></span>
