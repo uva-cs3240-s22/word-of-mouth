@@ -20,7 +20,6 @@ class Recipe(models.Model):
         related_name="recipes",
     )
     favorites = models.ManyToManyField(User, related_name="favorites")
-
     # THINGS TO THINK ABOUT -
     # what should the picture(s) be
     # what happens when a recipe (particularly a parent recipe) is deleted
@@ -28,3 +27,11 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.title_text
+
+
+class Comment(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="comments", null=True)
+    body = models.TextField()
+    posted_date = models.DateTimeField(default=datetime.now)
+    edited_date = models.DateTimeField(default=None)
+    recipes = models.ForeignKey(Recipe, related_name="comments", on_delete=models.CASCADE)
