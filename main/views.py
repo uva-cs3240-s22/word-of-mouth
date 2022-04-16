@@ -21,6 +21,8 @@ class BaseMixin(ContextMixin, View):
         user = request.user
         if user.is_authenticated:
             username = user.username
+            x['username'] = user.socialaccount_set.first().extra_data['name']
+            x['user'] = request.user
             if len(SocialAccount.objects.filter(user=request.user)) > 0:
                 x['extra_data'] = SocialAccount.objects.filter(user=request.user)[0].extra_data
                 x['avatar_url'] = SocialAccount.objects.filter(user=request.user)[0].extra_data['picture']
@@ -30,8 +32,7 @@ class BaseMixin(ContextMixin, View):
         else:
             username = "Not logged in"
 
-        x['username'] = user.socialaccount_set.first().extra_data['name']
-        x['user'] = request.user
+
         return x
 
 
