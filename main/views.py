@@ -7,6 +7,7 @@ from django.urls import reverse_lazy, reverse
 from django.views import generic
 from django.views.generic import TemplateView, CreateView
 from django.views.generic.base import ContextMixin, View
+from django.db.models import Q
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormView
 
@@ -160,3 +161,14 @@ class FavoriteListView(BaseMixin, generic.ListView):
     def get_queryset(self):
         request = self.request
         return Recipe.objects.filter(favorites=request.user)
+
+class SearchResultsView(BaseMixin, generic.ListView):
+    model = Recipe
+    template_name = 'main/search_results.html'
+    context_object_name = 'results'
+
+    def get_queryset(self):
+        query = self.request.GET.get("query")
+        return Recipe.objects.filter(
+            Q(title_text__icontains=query) | Q(ingredients_list__icontains=query) | Q(body_text__icontains=query)
+        )
