@@ -1,0 +1,24 @@
+{% extends 'main/base.html' %}
+
+{% load static %}
+
+{% load bootstrap5 %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Home</li>
+    </ol>
+{% endblock %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title-danger">You must be logged in to use this feature!</h5>
+                </div>
+
+            </div>
+        </div><!-- End Reports -->
+    </div>
+{% endblock %}

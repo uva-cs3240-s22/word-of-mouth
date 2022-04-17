@@ -90,7 +90,7 @@ class RecipeCreateView(BaseMixin, CreateView):
             form.instance.owner = self.request.user
             return super().form_valid(form)
         else:
-            return HttpResponseRedirect(self.request.META['HTTP_REFERER'])
+            return HttpResponseRedirect('/anonerror/')
 
 
 class RecipeListView(BaseMixin, generic.ListView):
@@ -108,7 +108,7 @@ class RecipeCommentFormView(SingleObjectMixin, FormView):
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return HttpResponseForbidden()
+            return HttpResponseRedirect('/anonerror/')
         self.object = self.get_object()
         form = self.get_form()
         if form.is_valid():
@@ -126,6 +126,9 @@ class RecipeCommentFormView(SingleObjectMixin, FormView):
         form.instance.recipe = self.object
         form.save()
         return super().form_valid(form)
+
+
+
 
 
 class RecipeView(View):
@@ -159,7 +162,7 @@ def favorite_add(request, id):
             recipe.favorites.add(request.user)
         return HttpResponseRedirect(request.META['HTTP_REFERER'])
     else:
-        return HttpResponseRedirect(request.META['HTTP_REFERER'])
+        return HttpResponseRedirect('/anonerror/')
 
 
 class FavoriteListView(BaseMixin, generic.ListView):
@@ -181,3 +184,7 @@ class SearchResultsView(BaseMixin, generic.ListView):
         return Recipe.objects.filter(
             Q(title_text__icontains=query) | Q(ingredients_list__icontains=query) | Q(body_text__icontains=query)
         )
+
+class AnonErrorView(BaseMixin, generic.TemplateView):
+    template_name = 'main/anon_error.html'
+
