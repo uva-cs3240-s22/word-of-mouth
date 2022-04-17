@@ -11,4 +11,5 @@ urlpatterns = [
     path('recipe/<int:pk>', views.RecipeView.as_view(), name='recipe_detail'),
     path('favorites', views.FavoriteListView.as_view(), name='favorites_list'),
     path("search/", views.SearchResultsView.as_view(), name="search_results"),
+    path("anonerror/", views.AnonErrorView.as_view(), name="anon_error"),
 ]

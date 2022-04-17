@@ -1,7 +1,7 @@
 # Create your views here.
 from allauth.socialaccount.models import SocialAccount
 from django.forms import model_to_dict
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views import generic
@@ -68,6 +68,7 @@ class IndexView(BaseMixin, TemplateView):
 
 
 class RecipeCreateView(BaseMixin, CreateView):
+
     template_name = 'main/recipe.html'
     model = Recipe
     fields = ['title_text', 'ingredients_list', 'body_text', 'picture']
@@ -80,13 +81,16 @@ class RecipeCreateView(BaseMixin, CreateView):
             return self.initial
 
     def form_valid(self, form):
-        if 'from' in self.request.POST:
-            form.instance.parent = Recipe.objects.get(id=self.request.POST['from'])
-        elif 'from' in self.request.GET:
-            form.instance.parent = Recipe.objects.get(id=self.request.GET['from'])
+        if self.request.user.is_authenticated:
+            if 'from' in self.request.POST:
+                form.instance.parent = Recipe.objects.get(id=self.request.POST['from'])
+            elif 'from' in self.request.GET:
+                form.instance.parent = Recipe.objects.get(id=self.request.GET['from'])
 
-        form.instance.owner = self.request.user
-        return super().form_valid(form)
+            form.instance.owner = self.request.user
+            return super().form_valid(form)
+        else:
+            return HttpResponseRedirect('/anonerror/')
 
 
 class RecipeListView(BaseMixin, generic.ListView):
@@ -104,7 +108,7 @@ class RecipeCommentFormView(SingleObjectMixin, FormView):
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return HttpResponseForbidden()
+            return HttpResponseRedirect('/anonerror/')
         self.object = self.get_object()
         form = self.get_form()
         if form.is_valid():
@@ -122,6 +126,9 @@ class RecipeCommentFormView(SingleObjectMixin, FormView):
         form.instance.recipe = self.object
         form.save()
         return super().form_valid(form)
+
+
+
 
 
 class RecipeView(View):
@@ -147,12 +154,15 @@ class RecipeDetailView(BaseMixin, generic.DetailView):
 
 
 def favorite_add(request, id):
-    recipe = get_object_or_404(Recipe, id=id)
-    if recipe.favorites.filter(id=request.user.id).exists():
-        recipe.favorites.remove(request.user)
+    if request.user.is_authenticated:
+        recipe = get_object_or_404(Recipe, id=id)
+        if recipe.favorites.filter(id=request.user.id).exists():
+            recipe.favorites.remove(request.user)
+        else:
+            recipe.favorites.add(request.user)
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])
     else:
-        recipe.favorites.add(request.user)
-    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+        return HttpResponseRedirect('/anonerror/')
 
 
 class FavoriteListView(BaseMixin, generic.ListView):
@@ -160,8 +170,9 @@ class FavoriteListView(BaseMixin, generic.ListView):
     context_object_name = 'favorites'
 
     def get_queryset(self):
-        request = self.request
-        return Recipe.objects.filter(favorites=request.user)
+        if self.request.user.is_authenticated:
+            request = self.request
+            return Recipe.objects.filter(favorites=request.user)
 
 class SearchResultsView(BaseMixin, generic.ListView):
     model = Recipe
@@ -173,3 +184,7 @@ class SearchResultsView(BaseMixin, generic.ListView):
         return Recipe.objects.filter(
             Q(title_text__icontains=query) | Q(ingredients_list__icontains=query) | Q(body_text__icontains=query)
         )
+
+class AnonErrorView(BaseMixin, generic.TemplateView):
+    template_name = 'main/anon_error.html'
+
