@@ -35,7 +35,7 @@ SECURE_SSL_REDIRECT = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'SAMEORIGIN'
-SECURE_SSL_HOST = 'https://word-of-mouth-develop.herokuapp.com/'
+SECURE_SSL_HOST = 'word-of-mouth-develop.herokuapp.com/'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
