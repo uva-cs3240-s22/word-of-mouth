@@ -23,20 +23,9 @@ import django.middleware
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure--i+oaq(*0iw+i%60x%ux6cbt&5e^aa&+2%@fq+!-x!rzx8fkg&'
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = 3600
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_SSL_REDIRECT = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
-X_FRAME_OPTIONS = 'SAMEORIGIN'
-SECURE_SSL_HOST = 'word-of-mouth-develop.herokuapp.com/'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -172,6 +161,18 @@ if 'PROD' in os.environ and os.environ['PROD'].lower() in ('true', 't', '1'):
         'NAME': 'word_of_mouth',
     }
     django_heroku.settings(locals())
+    # Quick-start development settings - unsuitable for production
+    # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
+
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'SAMEORIGIN'
+    SECURE_SSL_HOST = 'word-of-mouth-develop.herokuapp.com/'
 
 #add this in the end of file
 AUTHENTICATION_BACKENDS = (
