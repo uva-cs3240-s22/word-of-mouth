@@ -3,7 +3,6 @@ from datetime import datetime
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.sites.models import Site
-from django.forms import modelform_factory
 from django.template.response import TemplateResponse
 from django.test import RequestFactory, TestCase
 # Create your tests here.
@@ -142,11 +141,39 @@ class CreateRecipeTests(TestCase):
 
     # Testing that request.user is assigned to recipe made
     def test_user_form(self):
-        request = self.rf.post(reverse_lazy("new_recipe"), data={'title_text': "title", 'ingredients_list': "ingredients",
-                                                    'body_text': "body", 'picture': ""})
+        request = self.rf.post(reverse_lazy("new_recipe"),
+                               data={'title_text': "title", 'ingredients_list': "ingredients",
+                                     'body_text': "body", 'picture': ""})
         request.user = User.objects.create(id=1, username="Tester")
         response = RecipeCreateView.as_view()(request)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Recipe.objects.filter(title_text="title").first().owner, request.user)
 
 
+class TestRedirectsOnAnon(TestCase):
+    def setUp(self) -> None:
+        self.rf = RequestFactory()
+
+    def test_create_recipe_302(self):
+        request = self.rf.get(reverse_lazy("new_recipe"))
+        request.user = AnonymousUser()
+        response = RecipeCreateView.as_view()(request)
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_create_recipe_redirects_to_google(self):
+        request = self.rf.get(reverse_lazy("new_recipe"))
+        request.user = AnonymousUser()
+        response = RecipeCreateView.as_view()(request)
+
+        self.assertIn("login", response.url)
+        self.assertIn("google", response.url)
+
+    def test_favorite_redirects_to_google(self):
+        request = self.rf.get(reverse_lazy("favorite_add", kwargs={"id": 3}))
+        request.user = AnonymousUser()
+        response = favorite_add(request)
+
+        self.assertIn("login", response.url)
+        self.assertIn("google", response.url)
+        self.assertIn("next=/recipe/fav/", response.url)
