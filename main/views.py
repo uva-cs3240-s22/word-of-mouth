@@ -1,13 +1,15 @@
 # Create your views here.
 from allauth.socialaccount.models import SocialAccount
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.forms import model_to_dict
-from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views import generic
 from django.views.generic import TemplateView, CreateView
 from django.views.generic.base import ContextMixin, View
-from django.db.models import Q
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormView
 
@@ -20,8 +22,11 @@ class BaseMixin(ContextMixin, View):
         request = self.request
         user = request.user
         if user.is_authenticated:
-            username = user.username
-            x['username'] = user.socialaccount_set.first().extra_data['name']
+
+            if user.socialaccount_set.first() and user.socialaccount_set.first().extra_data and "name" in user.socialaccount_set.first().extra_data:
+                x['username'] = user.socialaccount_set.first().extra_data['name']
+            else:
+                x['username'] = user.username
             x['user'] = request.user
             if len(SocialAccount.objects.filter(user=request.user)) > 0:
                 x['extra_data'] = SocialAccount.objects.filter(user=request.user)[0].extra_data
@@ -31,7 +36,6 @@ class BaseMixin(ContextMixin, View):
                 x['avatar_url'] = 'static/assets/img/Default_Profile_Image.png'
         else:
             username = "Not logged in"
-
 
         return x
 
@@ -67,8 +71,7 @@ class IndexView(BaseMixin, TemplateView):
     template_name = 'main/index.html'
 
 
-class RecipeCreateView(BaseMixin, CreateView):
-
+class RecipeCreateView(BaseMixin, LoginRequiredMixin, CreateView):
     template_name = 'main/recipe.html'
     model = Recipe
     fields = ['title_text', 'ingredients_list', 'body_text', 'picture']
@@ -128,11 +131,7 @@ class RecipeCommentFormView(SingleObjectMixin, FormView):
         return super().form_valid(form)
 
 
-
-
-
 class RecipeView(View):
-
     def get(self, request, *args, **kwargs):
         view = RecipeDetailView.as_view()
         return view(request, *args, **kwargs)
@@ -152,7 +151,7 @@ class RecipeDetailView(BaseMixin, generic.DetailView):
         context['form'] = CommentForm()
         return context
 
-
+@login_required
 def favorite_add(request, id):
     if request.user.is_authenticated:
         recipe = get_object_or_404(Recipe, id=id)
@@ -160,12 +159,12 @@ def favorite_add(request, id):
             recipe.favorites.remove(request.user)
         else:
             recipe.favorites.add(request.user)
-        return HttpResponseRedirect(request.META['HTTP_REFERER'])
+        return HttpResponseRedirect(reverse_lazy('recipe_list'))
     else:
         return HttpResponseRedirect('/anonerror/')
 
 
-class FavoriteListView(BaseMixin, generic.ListView):
+class FavoriteListView(BaseMixin, LoginRequiredMixin, generic.ListView):
     template_name = 'main/favorites.html'
     context_object_name = 'favorites'
 
@@ -173,6 +172,7 @@ class FavoriteListView(BaseMixin, generic.ListView):
         if self.request.user.is_authenticated:
             request = self.request
             return Recipe.objects.filter(favorites=request.user)
+
 
 class SearchResultsView(BaseMixin, generic.ListView):
     model = Recipe
@@ -185,6 +185,6 @@ class SearchResultsView(BaseMixin, generic.ListView):
             Q(title_text__icontains=query) | Q(ingredients_list__icontains=query) | Q(body_text__icontains=query)
         )
 
+
 class AnonErrorView(BaseMixin, generic.TemplateView):
     template_name = 'main/anon_error.html'
-

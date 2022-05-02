@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
 
+
 SITE_ID = 1
 LOGIN_REDIRECT_URL = "/"
-
+LOGIN_URL = "/accounts/google/login"
 
 from pathlib import Path
 
