@@ -1,0 +1,5 @@
+<div class="col align-bottom">
+                                <img src="{{ person.socialaccount_set.all.0.get_avatar_url }}" alt="Profile"
+                                     class="rounded-circle bg-transparent" style="max-height: 2.5em; max-width: 1.5em">
+                                <span class="text-black align-bottom">{{ person.socialaccount_set.first.extra_data.name }} </span>
+    </div>

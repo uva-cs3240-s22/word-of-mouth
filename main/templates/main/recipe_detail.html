@@ -1,0 +1,57 @@
+{% extends "main/base.html" %}
+
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url "index" %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url "recipe_list" %}">Recipes</a></li>
+                    <li class="breadcrumb-item active">{{ recipe.title_text }}</li>
+                </ol>
+{% endblock %}
+
+{% block title %}{{ recipe.title_text }}{% endblock %}
+{% block content %}
+
+    <div class="container">
+        <div class="row justify-content-center">
+            {% load filterFavorite %}
+            {% load static %}
+            <link rel="stylesheet" href="{% static 'assets/css/favorite.css' %}">
+            <div class="card col-8">
+                <div class="card-body">
+                    <div class="card-header">
+                        {% include "main/card_header.html" with recipe=recipe %}
+                    </div>
+                    <div class="card-title">{{ recipe.title_text }}
+                        {% if recipe.parent %}
+                            <span>Forked from {{ recipe.parent.title_text }}</span>
+                        {% endif %}
+                        {% if recipe.children.count > 0 %}
+                            <span>Has {{ recipe.children.count }} child(ren).</span>
+                        {% endif %}
+                    </div>
+                    {% if recipe.picture %}
+                        <div class="justify-content-center d-flex">
+                            <img src="{{ recipe.picture.url }}" class="card-img img-fluid"
+                                 style="max-width: 500px; max-height: 100%" alt="...">
+                        </div>
+                    {% endif %}
+                    <p>{{ recipe.ingredients_list|linebreaks }}</p>
+                    {{ recipe.body_text|linebreaks }}
+
+                    <div class="card-footer">
+                        <div class="row align-items-center">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <br>
+            <div class="card col-6" style="max-width: 700px">
+                <div class="card-title">Comments</div>
+                <div class="card-body">
+                    {% include "main/comment_section.html" with comments=recipe.comments.all %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

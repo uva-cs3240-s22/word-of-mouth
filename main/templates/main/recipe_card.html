@@ -1,0 +1,27 @@
+{% load filterFavorite %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'assets/css/favorite.css' %}">
+<div class="card">
+    <div class="card-body">
+        <div class="card-header">
+                        {% include "main/card_header.html" with recipe=recipe %}
+        </div>
+        {% if recipe.picture %}
+            <img src="{{ recipe.picture.url }}" class="card-img-top" alt="...">
+        {% endif %}
+        <div class="card-title"><a href="{% url "recipe_detail" recipe.pk %}"> {{ recipe.title_text }}</a>
+            {% if recipe.parent %}
+                <span>Forked from <a href="{% url "recipe_detail" recipe.parent.pk %}">{{ recipe.parent.title_text }}</a></span>
+            {% endif %}
+            {% if recipe.children.count > 0 %}
+                <span>Has {{ recipe.children.count }} child(ren).</span>
+            {% endif %}
+        </div>
+        <p>{{ recipe.ingredients_list|linebreaks }}</p>
+        <div class="card-footer">
+            {{ recipe.body_text|linebreaks }}
+        </div>
+    </div>
+
+</div>
+<br>

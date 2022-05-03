@@ -1,0 +1,24 @@
+{% extends "main/base.html" %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url "index" %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url "recipe_list" %}">Recipes</a></li>
+                    <li class="breadcrumb-item active">Favorites</li>
+                </ol>
+{% endblock %}
+{% block title %}Explore Favorite Recipes{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        {% if favorites %}
+            <div class="col-6 justify-items-center">
+                {% for recipe in favorites %}
+                    {% include "main/recipe_card.html" with recipe=recipe %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No favorite recipes are available. <a href="{% url 'new_recipe' %}">Create new recipe</a></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

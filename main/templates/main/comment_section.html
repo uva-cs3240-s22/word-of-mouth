@@ -1,0 +1,55 @@
+{% load humanize %}
+{% load bootstrap5 %}
+
+<div class="d-flex flex-column">
+    {% for comment in comments %}
+        {# taken from https://getbootstrap.com/docs/5.0/components/card/ #}
+        <div class="card mb-3" style=" box-shadow: -1px 2px 4px 4px #EAEAEA;">
+            <div class="row">
+                <div class="col-2 d-flex"
+                     style="background-color: #fafafa; border-right: thin black; border-right-style: solid">
+                    <img class="rounded-circle img-fluid my-auto mx-auto"
+                         src="{{ comment.owner.socialaccount_set.all.0.get_avatar_url }}"
+                         alt="...">
+                </div>
+                <div class="col-10">
+                    <div class="card-body">
+                        <div class="card-title d-flex flex-row align-items-center">
+                            <div class="mx-1">{{ comment.owner.socialaccount_set.first.extra_data.name }}</div>
+                            <span class="text-center">, {{ comment.posted_date|naturaltime }}</span>
+                        </div>
+                        <p class="card-text">
+                            {{ comment.body }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <span>No comments for recipe</span>
+    {% endfor %}
+    <div class="card mb-3" style=" box-shadow: -1px 2px 4px 4px #EAEAEA;">
+        <div class="row">
+            <div class="col-2 d-flex"
+                 style="background-color: #fafafa; border-right: thin black; border-right-style: solid">
+                <img class="rounded-circle img-fluid my-auto mx-auto"
+                     src="{{ request.user.socialaccount_set.all.0.get_avatar_url }}"
+                     alt="...">
+            </div>
+            <div class="col-10">
+                <div class="card-body">
+                    <div class="card-title d-flex flex-row align-items-center pb-0">
+                        <div class="mx-1">{{ request.user.socialaccount_set.first.extra_data.name }}</div>
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        {% bootstrap_form form layout="inline" %}
+                        <div class="d-flex justify-content-end my-2">
+                        <button class="btn btn-success" type="submit">Comment</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

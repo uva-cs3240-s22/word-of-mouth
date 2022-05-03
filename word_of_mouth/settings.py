@@ -11,19 +11,18 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
 
+
 SITE_ID = 1
 LOGIN_REDIRECT_URL = "/"
-
+LOGIN_URL = "/accounts/google/login"
 
 from pathlib import Path
 
 import django_heroku
+import django.middleware
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure--i+oaq(*0iw+i%60x%ux6cbt&5e^aa&+2%@fq+!-x!rzx8fkg&'
@@ -44,12 +43,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "django.contrib.sites",  # <--
+    'django.contrib.humanize',
     "allauth",  # <--
     "allauth.account",  # <--
     "allauth.socialaccount",  # <--
     "allauth.socialaccount.providers.google",
     "main",
     "word_of_mouth",
+    'django.contrib.sitemaps',
+    'django.contrib.redirects',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -72,6 +74,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
 ]
 
 ROOT_URLCONF = 'word_of_mouth.urls'
@@ -153,9 +162,26 @@ if 'PROD' in os.environ and os.environ['PROD'].lower() in ('true', 't', '1'):
         'NAME': 'word_of_mouth',
     }
     django_heroku.settings(locals())
+    # Quick-start development settings - unsuitable for production
+    # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
+
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'SAMEORIGIN'
+    SECURE_SSL_HOST = 'word-of-mouth-develop.herokuapp.com/'
 
 #add this in the end of file
 AUTHENTICATION_BACKENDS = (
    "django.contrib.auth.backends.ModelBackend",
    "allauth.account.auth_backends.AuthenticationBackend",
 )
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_STORAGE_BUCKET_NAME= os.environ.get("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_ACCESS_ID = os.environ.get("AWS_S3_ACCESS_ID")
+AWS_S3_SECRET_ACCESS_KEY = os.environ.get("AWS_S3_SECRET_ACCESS_KEY")
