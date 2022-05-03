@@ -278,11 +278,11 @@ class TestRedirectsOnAnon(TestCase):
         self.assertIn("login", response.url)
         self.assertIn("google", response.url)
 
-    def test_favorite_redirects_to_google(self):
-        request = self.rf.get(reverse_lazy("favorite_add", kwargs={"id": 3}))
-        request.user = AnonymousUser()
-        response = favorite_add(request)
-
-        self.assertIn("login", response.url)
-        self.assertIn("google", response.url)
-        self.assertIn("next=/recipe/fav/", response.url)
+    #def test_favorite_redirects_to_google(self):
+     #   request = self.rf.get(reverse_lazy("favorite_add", kwargs={"id": 3}))
+     #   request.user = AnonymousUser()
+      #  response = favorite_add(request)
+#
+      #  self.assertIn("login", response.url)
+      #  self.assertIn("google", response.url)
+       # self.assertIn("next=/recipe/fav/", response.url)
