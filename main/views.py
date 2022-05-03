@@ -159,7 +159,7 @@ def favorite_add(request, id):
             recipe.favorites.remove(request.user)
         else:
             recipe.favorites.add(request.user)
-        return HttpResponseRedirect(request.META['HTTP_REFERER'])
+        return HttpResponseRedirect(reverse_lazy('favorites_list'))
     else:
         return HttpResponseRedirect('/anonerror/')
 
