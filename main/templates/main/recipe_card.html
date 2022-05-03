@@ -1,15 +1,10 @@
 {% load filterFavorite %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'assets/css/favorite.css' %}">
+
 <div class="card">
-    <div class="card-body">
-        <div class="card-header">
-                        {% include "main/card_header.html" with recipe=recipe %}
-        </div>
-{#        <p>{{ recipe.deleted }}</p>#}
-        {% if recipe.picture %}
-            <img src="{{ recipe.picture.url }}" class="card-img-top" alt="...">
-        {% endif %}
+<div class="row">
+    <div class="col-sm-6">
         <div class="card-title"><a href="{% url "recipe_detail" recipe.pk %}"> {{ recipe.title_text }}</a>
             {% if recipe.parent %}
                 <span>Forked from <a href="{% url "recipe_detail" recipe.parent.pk %}">{{ recipe.parent.title_text }}</a></span>
@@ -17,13 +12,33 @@
             {% if recipe.children.count > 0 %}
                 <span>Has {{ recipe.children.count }} child(ren).</span>
             {% endif %}
-        </div>
-
+        </div >
+        <div class="card-body">
+        <h4>
+            Ingredients:
+        </h4>
         <p>{{ recipe.ingredients_list|linebreaks }}</p>
+        </div>
         <div class="card-footer">
+            <h4>
+                Steps:
+            </h4>
             {{ recipe.body_text|linebreaks }}
         </div>
     </div>
-
+    <div class="col-sm-6">
+        {% if recipe.picture %}
+            <img src="{{ recipe.picture.url }}" class="card-img-top" alt="...">
+        {% endif %}
+    </div>
 </div>
+<div>
+    <div class="card-header">
+        {% include "main/card_header.html" with recipe=recipe %}
+    </div>
+</div>
+</div>
+
+
+
 <br>
