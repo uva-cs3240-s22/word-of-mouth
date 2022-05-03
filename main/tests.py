@@ -50,6 +50,7 @@ class IndexTests(TestCase):
         self.assertEqual(response.context_data['avatar_url'], 'test.jpg')
 
 
+
 class RecipeTests(TestCase):
     # Setting up
     def setUp(self):
@@ -110,6 +111,36 @@ class RecipeTests(TestCase):
         self.assertEqual(initial['body_text'], x.body_text)
 
         self.assertNotIn('parent_id', initial)
+
+    def testDoNotShowIfDeleted(self):
+        x = Recipe.objects.create(owner=self.request.user, title_text="Test Deleted Recipe",
+                                      ingredients_list="Lots of ingredients", body_text="tasty meal!", deleted="true")
+        x.save()
+        recipes = []
+        if x.deleted != "true":
+            recipes.append(x)
+        print(recipes)
+        self.assertFalse(len(recipes) == 1)
+
+    def testShowBasicRecipe(self):
+        x = Recipe.objects.create(owner=self.request.user, title_text="Test Not Deleted Recipe",
+                                  ingredients_list="Lots of ingredients part 2", body_text="tasty meal!", deleted="false")
+        x.save()
+        recipes = []
+        if x.deleted != "true":
+            recipes.append(x)
+        print(recipes)
+        self.assertTrue(len(recipes) == 1)
+
+    def testShowEvenIfDeletedIsNotSet(self):
+        x = Recipe.objects.create(owner=self.request.user, title_text="Test Not Deleted Recipe",
+                                  ingredients_list="Lots of ingredients part 2", body_text="tasty meal!")
+        x.save()
+        recipes = []
+        if x.deleted != "true":
+            recipes.append(x)
+        print(recipes)
+        self.assertTrue(len(recipes) > 0)
 
 
 class DefaultAvatarTests(TestCase):

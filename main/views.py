@@ -98,7 +98,12 @@ class RecipeListView(BaseMixin, generic.ListView):
     context_object_name = 'recipe_list'
 
     def get_queryset(self):
-        return Recipe.objects.all()
+        recipes = []
+        for recipe in Recipe.objects.all():
+            if recipe.deleted != "true":
+                recipes.append(recipe)
+        return recipes
+
 
 
 class RecipeCommentFormView(SingleObjectMixin, FormView):
@@ -160,6 +165,15 @@ def favorite_add(request, id):
             recipe.favorites.remove(request.user)
         else:
             recipe.favorites.add(request.user)
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    else:
+        return HttpResponseRedirect('/anonerror/')
+
+def delete(request, id):
+    if request.user.is_authenticated:
+        recipe = get_object_or_404(Recipe, id=id)
+        recipe.deleted = "true"
+        recipe.save()
         return HttpResponseRedirect(request.META['HTTP_REFERER'])
     else:
         return HttpResponseRedirect('/anonerror/')

@@ -7,7 +7,10 @@
         {% if results %}
             <div class="col-6 justify-items-center">
                 {% for recipe in results %}
-                    {% include "main/recipe_card.html" with recipe=recipe %}
+                    {% if recipe.deleted != "true"%}
+
+                        {% include "main/recipe_card.html" with recipe=recipe %}
+                    {% endif %}
                 {% endfor %}
             </div>
         {% else %}

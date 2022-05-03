@@ -13,7 +13,10 @@
         {% if favorites %}
             <div class="col-6 justify-items-center">
                 {% for recipe in favorites %}
+                {% if recipe.deleted != "true"%}
+
                     {% include "main/recipe_card.html" with recipe=recipe %}
+                {% endif %}
                 {% endfor %}
             </div>
         {% else %}

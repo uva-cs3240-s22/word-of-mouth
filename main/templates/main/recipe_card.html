@@ -6,6 +6,7 @@
         <div class="card-header">
                         {% include "main/card_header.html" with recipe=recipe %}
         </div>
+{#        <p>{{ recipe.deleted }}</p>#}
         {% if recipe.picture %}
             <img src="{{ recipe.picture.url }}" class="card-img-top" alt="...">
         {% endif %}
@@ -17,6 +18,7 @@
                 <span>Has {{ recipe.children.count }} child(ren).</span>
             {% endif %}
         </div>
+
         <p>{{ recipe.ingredients_list|linebreaks }}</p>
         <div class="card-footer">
             {{ recipe.body_text|linebreaks }}
