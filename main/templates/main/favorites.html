@@ -11,14 +11,13 @@
 <div class="container">
     <div class="row justify-content-center">
         {% if favorites %}
-            <div class="col-6 justify-items-center">
                 {% for recipe in favorites %}
                 {% if recipe.deleted != "true"%}
 
                     {% include "main/recipe_card.html" with recipe=recipe %}
                 {% endif %}
                 {% endfor %}
-            </div>
+
         {% else %}
             <p>No favorite recipes are available. <a href="{% url 'new_recipe' %}">Create new recipe</a></p>
         {% endif %}
