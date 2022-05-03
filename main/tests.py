@@ -1,15 +1,19 @@
 from datetime import datetime
 
-from allauth.socialaccount.models import SocialAccount
+from allauth.socialaccount.models import SocialApp, SocialLogin, SocialAccount
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.sites.models import Site
 from django.template.response import TemplateResponse
 from django.test import RequestFactory, TestCase
+
 # Create your tests here.
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 
 from main.models import Recipe
 from main.views import IndexView, favorite_add, RecipeCreateView
+from main.views import IndexView
+from main.views import RecipeCreateView, RecipeCommentFormView
+from main.models import Recipe, Comment
 
 
 class IndexTests(TestCase):
@@ -39,14 +43,65 @@ class IndexTests(TestCase):
 
     def test_with_google_user(self):
         self.request.user = User.objects.create_user('google', 'google@g.com', '123')
-        SocialAccount.objects.create(user=self.request.user, provider='google', uid=123, last_login=datetime.now(),
-                                     date_joined=datetime.now(), extra_data={"picture": "test.jpg"})
+        SocialAccount.objects.create(user=self.request.user, provider='google', uid=123, last_login=datetime.now(), date_joined=datetime.now(), extra_data={"picture": "test.jpg"})
         self.current_site = Site.objects.get_current()
 
         response: TemplateResponse = IndexView.as_view()(self.request)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['avatar_url'], 'test.jpg')
+
+
+class DefaultAvatarTests(TestCase):
+
+    # Setting up
+    def setUp(self):
+        self.rf = RequestFactory()
+        self.request = self.rf.get('/')
+
+    # Default avatar test
+    def avatar_is_default(self):
+        response = IndexView.as_view()(self.request)
+        self.assertContains(response, "bi bi-person-circle", html=True)
+
+
+class CreateRecipeTests(TestCase):
+
+    # Setting up
+    def setUp(self):
+        self.rf = RequestFactory()
+        # self.request = self.rf.get('/')
+
+    # Testing that empty form causes validation error
+    def test_submitting_empty_form(self):
+        request = self.rf.post("/recipe/add")
+        request.user = User.objects.create(id=1, username="Tester")
+        response = RecipeCreateView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "/recipe/list", html=True)
+
+    # Testing that request.user is assigned to recipe made
+    def test_user_form(self):
+        request = self.rf.post("/recipe/add", data={'title_text': "title", 'ingredients_list': "ingredients",
+                                                    'body_text': "body"})
+        request.user = User.objects.create(id=1, username="Tester")
+        response = RecipeCreateView.as_view()(request)
+        self.assertEqual(response.status_code, 302)
+
+    # Testing that an authenticated user will be able to get to the create recipe page
+    def test_with_authenticated_user(self):
+        request = self.rf.get("/recipe/add")
+        request.user = User.objects.create(id=1, username="Tester")
+        response = RecipeCreateView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+
+    # Testing that an anonymous user is redirected when trying to go to the create recipe page
+    def test_with_anon_user(self):
+        request = self.rf.get("/recipe/add")
+        request.user = AnonymousUser()
+        response = RecipeCreateView.as_view()(request)
+        self.assertEqual(response.status_code, 302)
+
 
 
 class RecipeTests(TestCase):
@@ -110,44 +165,39 @@ class RecipeTests(TestCase):
 
         self.assertNotIn('parent_id', initial)
 
-
-class DefaultAvatarTests(TestCase):
-
-    # Setting up
-    def setUp(self):
-        self.rf = RequestFactory()
-        self.request = self.rf.get('/')
-
-    # Default avatar test
-    def avatar_is_default(self):
-        response = IndexView.as_view()(self.request)
-        self.assertContains(response, "bi bi-person-circle", html=True)
-
-
-class CreateRecipeTests(TestCase):
-
-    # Setting up
-    def setUp(self):
-        self.rf = RequestFactory()
-        # self.request = self.rf.get('/')
-
-    # Testing that empty form causes validation error
-    def test_submitting_empty_form(self):
-        request = self.rf.post("/recipe/add")
-        request.user = User.objects.create(id=1, username="Tester")
-        response = RecipeCreateView.as_view()(request)
-        self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "/recipe/list", html=True)
-
-    # Testing that request.user is assigned to recipe made
-    def test_user_form(self):
-        request = self.rf.post(reverse_lazy("new_recipe"),
-                               data={'title_text': "title", 'ingredients_list': "ingredients",
-                                     'body_text': "body", 'picture': ""})
-        request.user = User.objects.create(id=1, username="Tester")
-        response = RecipeCreateView.as_view()(request)
+    def test_comment_anon_user(self):
+        x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe",
+                                  ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
+        x.save()
+        req = self.rf.post('/recipe/1', data={'message':'test comment'})
+        req.user = AnonymousUser()
+        response = RecipeCommentFormView.as_view()(req)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(Recipe.objects.filter(title_text="title").first().owner, request.user)
+
+    def test_comment_authenticated_user(self):
+        x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe",
+                                  ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
+        x.save()
+
+        req = self.rf.post(reverse('recipe_detail', kwargs={'pk':1},), data={'message':'test comment'})
+        test_user = User.objects.create_user('google2', 'google2@g.com', '1234')
+        test_user.save()
+        req.user = test_user
+        response = RecipeCommentFormView.as_view()(req, **{'pk': 1})
+        self.assertEqual(response.status_code, 200)
+
+    def test_comment_created(self):
+        x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe",
+                                  ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
+        x.save()
+
+        y = Comment.objects.create(owner=self.request.user, body= "test comment", recipe=x)
+        y.save()
+
+        self.assertTrue(y.recipe, x)
+        self.assertTrue(y.body, "test comment")
+        self.assertTrue(y.owner, self.request.user)
+
 
 
 class TestRedirectsOnAnon(TestCase):
