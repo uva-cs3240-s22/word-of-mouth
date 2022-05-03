@@ -151,7 +151,7 @@ class RecipeDetailView(BaseMixin, generic.DetailView):
         context['form'] = CommentForm()
         return context
 
-@login_required
+
 def favorite_add(request, id):
     if request.user.is_authenticated:
         recipe = get_object_or_404(Recipe, id=id)
@@ -159,7 +159,7 @@ def favorite_add(request, id):
             recipe.favorites.remove(request.user)
         else:
             recipe.favorites.add(request.user)
-        return HttpResponseRedirect(reverse_lazy('favorites_list'))
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])
     else:
         return HttpResponseRedirect('/anonerror/')
 
