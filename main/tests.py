@@ -3,6 +3,7 @@ from datetime import datetime
 from allauth.socialaccount.models import SocialApp, SocialLogin, SocialAccount
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.sites.models import Site
+from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.test import RequestFactory, TestCase
 
@@ -165,6 +166,29 @@ class RecipeTests(TestCase):
 
         self.assertNotIn('parent_id', initial)
 
+    def test_fork_different_user_and_date(self):
+        x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe",
+                                  ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
+
+        x.save()
+        req = self.rf.get(reverse_lazy("new_recipe"), {"from": x.id})
+        test_user = User.objects.create_user('google2', 'google2@g.com', '1234')
+        req.user = test_user
+        view: RecipeCreateView = RecipeCreateView()
+        view.setup(req)
+        initial = view.get_initial()
+
+        req2 = self.rf.post(reverse_lazy("new_recipe"), data={'title_text':initial['title_text'],'ingredients_list':initial['ingredients_list'], 'body_text':initial['body_text']})
+        req2.user=test_user
+        response = RecipeCreateView.as_view()(req2)
+
+        y = Recipe.objects.get(owner= test_user)
+
+        self.assertNotEqual(y.owner, x.owner)
+        self.assertNotEqual(y.posted_date, x.posted_date)
+        self.assertEqual(y.body_text, x.body_text)
+
+
     def test_comment_anon_user(self):
         x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe",
                                   ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
@@ -197,6 +221,41 @@ class RecipeTests(TestCase):
         self.assertTrue(y.recipe, x)
         self.assertTrue(y.body, "test comment")
         self.assertTrue(y.owner, self.request.user)
+
+    def test_empty_comment_created(self):
+        x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe",
+                                  ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
+        x.save()
+
+        y = Comment.objects.create(owner=self.request.user, recipe=x)
+        y.save()
+
+        self.assertTrue(y.DoesNotExist)
+
+    def test_fork_comments(self):
+        x = Recipe.objects.create(owner=self.request.user, title_text="Test Recipe",
+                                  ingredients_list="Ingredients! yum yum yum!", body_text="wowza!")
+
+        x.save()
+        req = self.rf.get(reverse_lazy("new_recipe"), {"from": x.id})
+        req.user = self.user
+
+        view: RecipeCreateView = RecipeCreateView()
+        view.setup(req)
+
+        recipe = get_object_or_404(Recipe, id=x.id)
+
+        testComment = Comment.objects.create(owner=self.request.user, body="test", recipe=recipe)
+        testComment2 = Comment.objects.create(owner=self.request.user, body="comment", recipe=recipe)
+        testComment.save()
+        testComment2.save()
+
+        commentCount = 0
+
+        for comment in recipe.comments.values().all():
+            commentCount += 1
+
+        self.assertTrue(commentCount == 2)
 
 
 
